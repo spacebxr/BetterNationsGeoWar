@@ -1,0 +1,55 @@
+prefix: "&8[&bGeoWar&8] &r"
+
+general:
+  no-permission: "&cYou do not have permission to do that."
+  players-only: "&cOnly players can use this command."
+  not-in-nation: "&cYou are not a member of any nation."
+  nation-not-found: "&cThat nation does not exist."
+  reloaded: "&aConfiguration reloaded."
+
+nation:
+  created: "&aFounded the nation &e{name}&a."
+  already-in-nation: "&cYou are already a member of a nation."
+  name-taken: "&cA nation with that name already exists."
+  invalid-name: "&cNation names must be 3-16 letters, digits or underscores."
+  disbanded: "&eThe nation &c{name}&e has been disbanded."
+  cannot-afford: "&cYour treasury cannot afford that ({cost})."
+  member-joined: "&e{player}&a joined the nation."
+  member-left: "&e{player}&e left the nation."
+  member-kicked: "&e{player}&c was removed from the nation."
+  role-changed: "&e{player}&a is now a &e{role}&a."
+  leadership-transferred: "&e{player}&a is now the leader."
+
+economy:
+  deposited: "&aDeposited &e{amount}&a into the treasury."
+  withdrawn: "&aWithdrew &e{amount}&a from the treasury."
+  tax-set: "&aTax rate set to &e{rate}&a."
+  salary-set: "&aSalary for &e{role}&a set to &e{amount}&a."
+  cycle-summary: "&8[&bTreasury&8] &7Income &a+{income} &7Expenses &c-{expenses} &7Net &e{net}"
+
+diplomacy:
+  request-sent: "&aSent a &e{type}&a proposal to &e{nation}&a."
+  request-received: "&e{nation}&a proposes &e{type}&a. Use the diplomacy menu to respond."
+  request-accepted: "&a{nation} accepted your &e{type}&a proposal."
+  request-declined: "&c{nation} declined your {type} proposal."
+  relation-changed: "&aRelation with &e{nation}&a is now &e{relation}&a."
+
+war:
+  declared: "&c{attacker} has declared a {type} war on {defender}!"
+  preparation: "&eWar with {nation} is in preparation for {seconds}s."
+  active: "&cThe war with {nation} is now active!"
+  peace-proposed: "&e{nation} has proposed peace."
+  peace-signed: "&aPeace has been signed with &e{nation}&a."
+  score-update: "&7War score against &e{nation}&7: &e{score}"
+
+military:
+  recruited: "&aRecruited &e{amount}&a troops."
+  trained: "&aTraining raised to &e{level}&a."
+  budget-set: "&aMilitary budget set to &e{amount}&a."
+  insufficient-manpower: "&cNot enough population to recruit that many troops."
+
+intel:
+  spy-dispatched: "&aDispatched a spy against &e{nation}&a."
+  spy-success: "&aYour spy returned with intelligence on &e{nation}&a."
+  spy-caught: "&cYour spy was caught by &e{nation}&c!"
+  sabotage-success: "&aSabotage against &e{nation}&a succeeded."
