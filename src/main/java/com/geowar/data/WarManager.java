@@ -79,10 +79,12 @@ public class WarManager {
     }
 
     public boolean endWar(String nationA, String nationB) {
-        return activeWars.removeIf(war ->
+        boolean removed = activeWars.removeIf(war ->
             (war.attacker.equalsIgnoreCase(nationA) && war.defender.equalsIgnoreCase(nationB)) ||
             (war.attacker.equalsIgnoreCase(nationB) && war.defender.equalsIgnoreCase(nationA))
-        ) && (save() == null ? true : true);
+        );
+        save();
+        return removed;
     }
 
     public List<WarRecord> getActiveWars() {

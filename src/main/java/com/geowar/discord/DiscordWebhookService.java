@@ -11,33 +11,35 @@ import java.time.Instant;
 
 public class DiscordWebhookService {
 
-    private final String warWebhookUrl;
-    private final String peaceWebhookUrl;
-    private final String treatyWebhookUrl;
+    private final String webhookUrl;
     private final String serverName;
 
     public DiscordWebhookService() {
-        warWebhookUrl = GeoWarPlugin.getInstance().getConfig().getString("discord.war-webhook-url", "");
-        peaceWebhookUrl = GeoWarPlugin.getInstance().getConfig().getString("discord.peace-webhook-url", "");
-        treatyWebhookUrl = GeoWarPlugin.getInstance().getConfig().getString("discord.treaty-webhook-url", "");
+        webhookUrl = GeoWarPlugin.getInstance().getConfig().getString("discord.webhook-url", "");
         serverName = GeoWarPlugin.getInstance().getConfig().getString("discord.server-name", "Minecraft Server");
     }
 
+    private boolean isEnabled() {
+        return webhookUrl != null && !webhookUrl.isEmpty() && !webhookUrl.equals("YOUR_WEBHOOK_URL_HERE");
+    }
+
     public void sendWarDeclaration(String attacker, String defender, String reason, String demands, String declarerName) {
-        if (warWebhookUrl.isEmpty() || warWebhookUrl.equals("YOUR_WEBHOOK_URL_HERE")) return;
+        if (!isEnabled()) return;
 
         String threadName = "War: " + attacker + " vs " + defender;
         String timestamp = Instant.now().toString();
 
         String json = "{"
             + "\"thread_name\": \"" + escapeJson(threadName) + "\","
+            + "\"content\": \"**" + escapeJson(attacker) + "** has declared war on **" + escapeJson(defender) + "**!\","
             + "\"embeds\": [{"
             + "\"title\": \"War Declaration\","
-            + "\"description\": \"**" + escapeJson(attacker) + "** has declared war on **" + escapeJson(defender) + "**.\","
+            + "\"author\": {\"name\": \"" + escapeJson(declarerName) + "\"},"
+            + "\"description\": \"A state of war has been declared between two nations.\","
             + "\"color\": 16711680,"
             + "\"fields\": ["
-            + "{\"name\": \"Declaring Nation\", \"value\": \"" + escapeJson(attacker) + "\", \"inline\": true},"
-            + "{\"name\": \"Target Nation\", \"value\": \"" + escapeJson(defender) + "\", \"inline\": true},"
+            + "{\"name\": \"Attacker\", \"value\": \"**" + escapeJson(attacker) + "**\", \"inline\": true},"
+            + "{\"name\": \"Defender\", \"value\": \"**" + escapeJson(defender) + "**\", \"inline\": true},"
             + "{\"name\": \"Declared By\", \"value\": \"" + escapeJson(declarerName) + "\", \"inline\": true},"
             + "{\"name\": \"Reason\", \"value\": \"" + escapeJson(reason) + "\", \"inline\": false},"
             + "{\"name\": \"Demands\", \"value\": \"" + escapeJson(demands) + "\", \"inline\": false}"
@@ -47,23 +49,26 @@ public class DiscordWebhookService {
             + "}]"
             + "}";
 
-        sendAsync(warWebhookUrl, json, "war declaration");
+        sendAsync(json, "war declaration");
     }
 
     public void sendPeaceAgreement(String nationA, String nationB, String signerName) {
-        if (peaceWebhookUrl.isEmpty() || peaceWebhookUrl.equals("YOUR_WEBHOOK_URL_HERE")) return;
+        if (!isEnabled()) return;
 
         String threadName = "Peace: " + nationA + " & " + nationB;
         String timestamp = Instant.now().toString();
 
         String json = "{"
             + "\"thread_name\": \"" + escapeJson(threadName) + "\","
+            + "\"content\": \"**" + escapeJson(nationA) + "** and **" + escapeJson(nationB) + "** have signed a peace agreement.\","
             + "\"embeds\": [{"
-            + "\"title\": \"Peace Agreement Signed\","
-            + "\"description\": \"**" + escapeJson(nationA) + "** and **" + escapeJson(nationB) + "** have ended their war.\","
+            + "\"title\": \"Peace Agreement\","
+            + "\"author\": {\"name\": \"" + escapeJson(signerName) + "\"},"
+            + "\"description\": \"The war between these nations has ended.\","
             + "\"color\": 65280,"
             + "\"fields\": ["
-            + "{\"name\": \"Nations\", \"value\": \"" + escapeJson(nationA) + " and " + escapeJson(nationB) + "\", \"inline\": true},"
+            + "{\"name\": \"Nation A\", \"value\": \"**" + escapeJson(nationA) + "**\", \"inline\": true},"
+            + "{\"name\": \"Nation B\", \"value\": \"**" + escapeJson(nationB) + "**\", \"inline\": true},"
             + "{\"name\": \"Signed By\", \"value\": \"" + escapeJson(signerName) + "\", \"inline\": true}"
             + "],"
             + "\"footer\": {\"text\": \"" + escapeJson(serverName) + "\"},"
@@ -71,11 +76,11 @@ public class DiscordWebhookService {
             + "}]"
             + "}";
 
-        sendAsync(peaceWebhookUrl, json, "peace agreement");
+        sendAsync(json, "peace agreement");
     }
 
     public void sendTreatyLogged(String nationA, String nationB, String type, String terms, String signerName) {
-        if (treatyWebhookUrl.isEmpty() || treatyWebhookUrl.equals("YOUR_WEBHOOK_URL_HERE")) return;
+        if (!isEnabled()) return;
 
         String threadName = "Treaty: " + nationA + " & " + nationB + " [" + type + "]";
         String timestamp = Instant.now().toString();
@@ -90,12 +95,15 @@ public class DiscordWebhookService {
 
         String json = "{"
             + "\"thread_name\": \"" + escapeJson(threadName) + "\","
+            + "\"content\": \"**" + escapeJson(nationA) + "** and **" + escapeJson(nationB) + "** have signed a " + escapeJson(type) + ".\","
             + "\"embeds\": [{"
             + "\"title\": \"Treaty Signed: " + escapeJson(type) + "\","
-            + "\"description\": \"**" + escapeJson(nationA) + "** and **" + escapeJson(nationB) + "** have signed a " + escapeJson(type) + ".\","
+            + "\"author\": {\"name\": \"" + escapeJson(signerName) + "\"},"
+            + "\"description\": \"A new diplomatic agreement has been established.\","
             + "\"color\": " + color + ","
             + "\"fields\": ["
-            + "{\"name\": \"Nations\", \"value\": \"" + escapeJson(nationA) + " & " + escapeJson(nationB) + "\", \"inline\": true},"
+            + "{\"name\": \"Nation A\", \"value\": \"**" + escapeJson(nationA) + "**\", \"inline\": true},"
+            + "{\"name\": \"Nation B\", \"value\": \"**" + escapeJson(nationB) + "**\", \"inline\": true},"
             + "{\"name\": \"Type\", \"value\": \"" + escapeJson(type) + "\", \"inline\": true},"
             + "{\"name\": \"Signed By\", \"value\": \"" + escapeJson(signerName) + "\", \"inline\": true},"
             + "{\"name\": \"Terms\", \"value\": \"" + escapeJson(terms) + "\", \"inline\": false}"
@@ -105,23 +113,26 @@ public class DiscordWebhookService {
             + "}]"
             + "}";
 
-        sendAsync(treatyWebhookUrl, json, "treaty");
+        sendAsync(json, "treaty");
     }
 
     public void sendTreatyRevoked(String nationA, String nationB, String revokerName) {
-        if (treatyWebhookUrl.isEmpty() || treatyWebhookUrl.equals("YOUR_WEBHOOK_URL_HERE")) return;
+        if (!isEnabled()) return;
 
         String threadName = "Treaty Revoked: " + nationA + " & " + nationB;
         String timestamp = Instant.now().toString();
 
         String json = "{"
             + "\"thread_name\": \"" + escapeJson(threadName) + "\","
+            + "\"content\": \"The treaty between **" + escapeJson(nationA) + "** and **" + escapeJson(nationB) + "** has been dissolved.\","
             + "\"embeds\": [{"
             + "\"title\": \"Treaty Revoked\","
-            + "\"description\": \"The treaty between **" + escapeJson(nationA) + "** and **" + escapeJson(nationB) + "** has been dissolved.\","
+            + "\"author\": {\"name\": \"" + escapeJson(revokerName) + "\"},"
+            + "\"description\": \"A diplomatic agreement has been revoked.\","
             + "\"color\": 16744272,"
             + "\"fields\": ["
-            + "{\"name\": \"Nations\", \"value\": \"" + escapeJson(nationA) + " & " + escapeJson(nationB) + "\", \"inline\": true},"
+            + "{\"name\": \"Nation A\", \"value\": \"**" + escapeJson(nationA) + "**\", \"inline\": true},"
+            + "{\"name\": \"Nation B\", \"value\": \"**" + escapeJson(nationB) + "**\", \"inline\": true},"
             + "{\"name\": \"Revoked By\", \"value\": \"" + escapeJson(revokerName) + "\", \"inline\": true}"
             + "],"
             + "\"footer\": {\"text\": \"" + escapeJson(serverName) + "\"},"
@@ -129,10 +140,10 @@ public class DiscordWebhookService {
             + "}]"
             + "}";
 
-        sendAsync(treatyWebhookUrl, json, "treaty revocation");
+        sendAsync(json, "treaty revocation");
     }
 
-    private void sendAsync(String webhookUrl, String json, String eventType) {
+    private void sendAsync(String json, String eventType) {
         Bukkit.getScheduler().runTaskAsynchronously(GeoWarPlugin.getInstance(), () -> {
             try {
                 URL url = new URL(webhookUrl);

@@ -167,7 +167,7 @@ public class GuiListener implements Listener {
                     return;
                 }
                 wm.declareWar(myNation.getName(), targetNationName, "No reason stated", "None");
-                DiplomacyGui.broadcastWar(myNation.getName(), targetNationName, "No reason stated", "None");
+                DiplomacyGui.broadcastWar(myNation.getName(), targetNationName, "No reason stated", "None", player.getName());
                 player.sendMessage(ChatColor.YELLOW + "Use /ngui and Diplomacy to view the war record.");
 
             } else if (action.equals("log_treaty")) {

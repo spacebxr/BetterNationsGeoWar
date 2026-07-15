@@ -69,10 +69,12 @@ public class TreatyManager {
     }
 
     public boolean revokeTreaty(String nationA, String nationB) {
-        return treaties.removeIf(t ->
+        boolean removed = treaties.removeIf(t ->
             (t.nationA.equalsIgnoreCase(nationA) && t.nationB.equalsIgnoreCase(nationB)) ||
             (t.nationA.equalsIgnoreCase(nationB) && t.nationB.equalsIgnoreCase(nationA))
-        ) && (save() == null ? true : true);
+        );
+        save();
+        return removed;
     }
 
     public boolean hasTreaty(String nationA, String nationB) {

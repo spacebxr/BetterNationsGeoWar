@@ -33,9 +33,9 @@ dependencies {
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
 }
 
-def targetJavaVersion = 21
+val targetJavaVersion = 21
 java {
-    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+    val javaVersion = JavaVersion.toVersion(targetJavaVersion)
     sourceCompatibility = javaVersion
     targetCompatibility = javaVersion
     if (JavaVersion.current() < javaVersion) {
@@ -43,7 +43,7 @@ java {
     }
 }
 
-tasks.withType(JavaCompile).configureEach {
+tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8"
     if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
         options.release.set(targetJavaVersion)
@@ -51,10 +51,10 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 tasks.processResources {
-    def props = [version: version]
-    inputs.properties props
+    val props = mapOf("version" to version.toString())
+    inputs.properties(props)
     filteringCharset = "UTF-8"
     filesMatching("plugin.yml") {
-        expand props
+        expand(props)
     }
 }
