@@ -30,6 +30,7 @@ dependencies {
     compileOnly("com.github.TownyAdvanced:Towny:0.100.3.0")
     compileOnly("org.geysermc.geyser:api:2.5.0-SNAPSHOT")
     compileOnly("org.geysermc.floodgate:api:2.2.3-SNAPSHOT")
+    compileOnly("com.github.MilkBowl:VaultAPI:1.7")
 }
 
 def targetJavaVersion = 21

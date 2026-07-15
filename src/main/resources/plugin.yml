@@ -3,7 +3,7 @@ version: '${version}'
 main: com.geowar.GeoWarPlugin
 api-version: '1.21'
 depend: [Towny]
-softdepend: [Geyser-Spigot, floodgate]
+softdepend: [Geyser-Spigot, floodgate, Vault]
 commands:
   nationgui:
     description: Opens the Nation GUI
