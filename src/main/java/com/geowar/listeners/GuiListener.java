@@ -131,7 +131,7 @@ public class GuiListener implements Listener {
         Nation myNation = resident.getNationOrNull();
         if (myNation == null) return;
 
-        if (title.equals("Active Treaties") || title.equals("Meetings") || title.equals("Active Wars")) {
+        if (title.equals("Active Treaties") || title.equals("Active Wars")) {
             if (itemName.equals("Back")) {
                 player.closeInventory();
                 Bukkit.getScheduler().runTaskLater(GeoWarPlugin.getInstance(), () -> DiplomacyGui.openJavaGui(player), 1L);
