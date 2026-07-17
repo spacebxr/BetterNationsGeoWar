@@ -1,12 +1,17 @@
 # Copyright License Agreement
 
 **Copyright (c) 2026 spacebxr**  
+<<<<<<< HEAD
 *All rights reserved.*
+=======
+_All rights reserved._
+>>>>>>> 17971aa (some thingss)
 
 ---
 
 ### 1. Terms and Restrictions
 
+<<<<<<< HEAD
 Permission is hereby granted to individuals to download, view, and inspect the source code of this project solely for educational, review, or evaluation purposes. 
 
 By accessing, downloading, or using this project, you agree to the following strict limitations:
@@ -15,6 +20,16 @@ By accessing, downloading, or using this project, you agree to the following str
 *   **No Private Use:** You may not host, deploy, run, or utilize this project for personal, private, or internal utility beyond mere evaluation of the source code.
 *   **No Modification:** You may not alter, transform, or build upon this source code.
 *   **No Redistribution:** You may not redistribute, sub-license, publish, or sell this software or its source code to any third party.
+=======
+Permission is hereby granted to individuals to download, view, and inspect the source code of this project solely for educational, review, or evaluation purposes.
+
+By accessing, downloading, or using this project, you agree to the following strict limitations:
+
+- **No Commercial Use:** You may not use this project, its source code, or any derivative works for any commercial purpose, financial gain, or business operations.
+- **No Private Use:** You may not host, deploy, run, or utilize this project for personal, private, or internal utility beyond mere evaluation of the source code.
+- **No Modification:** You may not alter, transform, or build upon this source code.
+- **No Redistribution:** You may not redistribute, sub-license, publish, or sell this software or its source code to any third party.
+>>>>>>> 17971aa (some thingss)
 
 ### 2. Attribution and Credits
 
