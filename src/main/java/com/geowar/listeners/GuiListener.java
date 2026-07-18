@@ -60,7 +60,7 @@ public class GuiListener implements Listener {
         }
 
         if (title.equals("Diplomacy") || title.equals("Select Nation") || title.equals("Propose Peace")
-            || title.equals("Active Treaties") || title.equals("Meetings") || title.equals("Active Wars")) {
+            || title.equals("Active Treaties") || title.equals("Revoke Treaty") || title.equals("Meetings") || title.equals("Active Wars")) {
             event.setCancelled(true);
             handleDiplomacySubScreens(event, player, title);
             return;
@@ -173,6 +173,7 @@ public class GuiListener implements Listener {
             } else if (action.equals("log_treaty")) {
                 GeoWarPlugin.getInstance().getTreatyManager().logTreaty(myNation.getName(), targetNationName, "Alliance", "Mutual cooperation");
                 Bukkit.broadcastMessage(ChatColor.GOLD + "[GeoWar] " + myNation.getName() + " and " + targetNationName + " have formed an Alliance.");
+                GeoWarPlugin.getInstance().getDiscord().sendTreatyLogged(myNation.getName(), targetNationName, "Alliance", "Mutual cooperation", player.getName());
 
             } else if (action.equals("request_meeting")) {
                 GeoWarPlugin.getInstance().getMeetingManager().requestMeeting(myNation.getName(), player.getName(), targetNationName, "Diplomatic meeting");
@@ -191,7 +192,28 @@ public class GuiListener implements Listener {
                 String opponent = itemName.replace("Peace with ", "");
                 GeoWarPlugin.getInstance().getWarManager().endWar(myNation.getName(), opponent);
                 Bukkit.broadcastMessage(ChatColor.GREEN + "[GeoWar] " + myNation.getName() + " and " + opponent + " have ended their war.");
+                GeoWarPlugin.getInstance().getDiscord().sendPeaceAgreement(myNation.getName(), opponent, player.getName());
                 player.closeInventory();
+            }
+            return;
+        }
+
+        if (title.equals("Revoke Treaty")) {
+            if (itemName.equals("Back")) {
+                player.closeInventory();
+                Bukkit.getScheduler().runTaskLater(GeoWarPlugin.getInstance(), () -> DiplomacyGui.openJavaGui(player), 1L);
+                return;
+            }
+            if (itemName.startsWith("[")) {
+                // Item name looks like: [Alliance] NationName
+                int bracketEnd = itemName.indexOf("]");
+                if (bracketEnd != -1) {
+                    String opponent = itemName.substring(bracketEnd + 1).trim();
+                    GeoWarPlugin.getInstance().getTreatyManager().revokeTreaty(myNation.getName(), opponent);
+                    Bukkit.broadcastMessage(ChatColor.RED + "[GeoWar] " + myNation.getName() + " has revoked their treaty with " + opponent + ".");
+                    GeoWarPlugin.getInstance().getDiscord().sendTreatyRevoked(myNation.getName(), opponent, player.getName());
+                    player.closeInventory();
+                }
             }
             return;
         }
