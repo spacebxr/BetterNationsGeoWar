@@ -23,7 +23,7 @@ public class ChatInputListener implements Listener {
         String action = pending.get(uuid);
         if (action == null) return;
 
-        if (!action.startsWith("pay_") && !action.startsWith("deposit_") && !action.startsWith("set_") && !action.startsWith("pay_all")) return;
+        if (!action.startsWith("pay_") && !action.startsWith("deposit_") && !action.startsWith("set_") && !action.startsWith("pay_all") && !action.startsWith("war_")) return;
 
         event.setCancelled(true);
         String input = event.getMessage().trim();
@@ -90,6 +90,28 @@ public class ChatInputListener implements Listener {
                         GeoWarPlugin.getInstance(),
                         () -> EconomyGui.payCitizen(player, targetName, input)
                     );
+                } else if (action.startsWith("war_reason:")) {
+                    String targetNation = action.replace("war_reason:", "");
+                    pending.put(uuid, "war_demands:" + targetNation + ":" + input);
+                    player.sendMessage(ChatColor.YELLOW + "Now, type your demands for " + targetNation + " (or type 'None'):");
+                } else if (action.startsWith("war_demands:")) {
+                    String[] parts = action.replace("war_demands:", "").split(":", 2);
+                    if (parts.length == 2) {
+                        String targetNation = parts[0];
+                        String reason = parts[1];
+                        GeoWarPlugin.getInstance().getServer().getScheduler().runTask(
+                            GeoWarPlugin.getInstance(),
+                            () -> {
+                                com.palmergames.bukkit.towny.object.Resident resident = com.palmergames.bukkit.towny.TownyAPI.getInstance().getResident(player);
+                                if (resident == null || resident.getNationOrNull() == null) return;
+                                String myNation = resident.getNationOrNull().getName();
+                                
+                                GeoWarPlugin.getInstance().getWarManager().declareWar(myNation, targetNation, reason, input);
+                                com.geowar.gui.DiplomacyGui.broadcastWar(myNation, targetNation, reason, input, player.getName());
+                                player.sendMessage(ChatColor.GREEN + "War declared successfully. Use /ngui and Diplomacy to view it.");
+                            }
+                        );
+                    }
                 }
                 break;
         }

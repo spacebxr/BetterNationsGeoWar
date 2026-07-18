@@ -166,9 +166,8 @@ public class GuiListener implements Listener {
                     player.sendMessage(ChatColor.RED + "You are already at war with " + targetNationName + ".");
                     return;
                 }
-                wm.declareWar(myNation.getName(), targetNationName, "No reason stated", "None");
-                DiplomacyGui.broadcastWar(myNation.getName(), targetNationName, "No reason stated", "None", player.getName());
-                player.sendMessage(ChatColor.YELLOW + "Use /ngui and Diplomacy to view the war record.");
+                GeoWarPlugin.getInstance().getPendingActions().put(player.getUniqueId(), "war_reason:" + targetNationName);
+                player.sendMessage(ChatColor.YELLOW + "Please type your reason for declaring war in chat:");
 
             } else if (action.equals("log_treaty")) {
                 GeoWarPlugin.getInstance().getTreatyManager().logTreaty(myNation.getName(), targetNationName, "Alliance", "Mutual cooperation");
