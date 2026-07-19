@@ -1,0 +1,104 @@
+GeoWarPlugin Commands
+======================
+
+Plugin metadata
+---------------
+Plugin name: GeoWarPlugin
+Version: 1.0.0
+Author: GeoWar Development Team
+
+General command
+---------------
+/nationgui
+/ngui
+    Opens the nation management GUI.
+
+Capture-zone commands
+---------------------
+Permission: geowar.capturezone.admin
+
+/capturezone create <id> <type> [radius] [capture-seconds]
+    Creates a capture zone at the sender's current location.
+    Types: OIL_RIG, KOTH, TERRITORY
+    Default radius: 40 blocks
+    Default capture time: 600 seconds
+
+/capturezone delete <id>
+    Deletes a registered capture zone.
+
+/capturezone info <id>
+    Shows the zone name, owner, and capture progress.
+
+/capturezone reload
+    Reloads capture configuration messaging.
+
+Oil-rig commands
+----------------
+Permission: geowar.capturezone.admin
+
+/oilrig create <id> OIL_RIG [radius] [capture-seconds]
+    Creates an oil-rig capture zone at the sender's current location.
+
+/oilrig delete <id>
+    Deletes an oil-rig capture zone.
+
+/oilrig info <id>
+    Shows oil-rig zone information.
+
+/oilrig reload
+    Reloads capture configuration messaging.
+
+KOTH commands
+-------------
+Permission: geowar.capturezone.admin
+
+/koth create <id> KOTH [radius] [capture-seconds]
+    Creates a KOTH capture zone at the sender's current location.
+
+/koth delete <id>
+    Deletes a KOTH capture zone.
+
+/koth info <id>
+    Shows KOTH zone information.
+
+/koth reload
+    Reloads capture configuration messaging.
+
+Capture permission
+------------------
+Permission: geowar.capturezone.capture
+Default: true
+
+Players with this permission can contribute to capture progress.
+Players must also belong to a Towny town.
+
+Registered command roots
+------------------------
+/capturezone
+/oilrig
+/koth
+/nationgui
+/ngui
+
+Not currently implemented
+-------------------------
+/capturezone list
+/capturezone start
+/capturezone stop
+/capturezone reward
+/capturezone setowner
+/oilrig list
+/oilrig reward
+/oilrig setname
+/oilrig setlocation
+/oilrig setradius
+/oilrig setowner
+/koth list
+/koth start
+/koth stop
+/koth reward
+/koth setname
+/koth setlocation
+/koth setradius
+/koth settime
+/koth setowner

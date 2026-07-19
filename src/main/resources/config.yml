@@ -42,6 +42,23 @@ integrations:
   placeholderapi: true
   discordsrv: true
 
+discord:
+  webhook-url: "YOUR_WEBHOOK_URL_HERE"
+  server-name: "Minecraft Server"
+
+capture:
+  update-interval-ticks: 20
+  default-capture-seconds: 600
+  contest-freeze: true
+  mob-spawn-blocking: true
+  ui:
+    bossbar: true
+    actionbar: true
+    titles: true
+    sounds: true
+    particles: true
+    announcements: true
+
 # Per-role permission overrides. Omit a role to use its built-in defaults.
 # Valid permissions are the names of com.geowar.model.role.NationPermission.
 roles:

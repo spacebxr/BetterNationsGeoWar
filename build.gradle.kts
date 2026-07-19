@@ -16,7 +16,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.1-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
     compileOnly("com.github.TownyAdvanced:Towny:0.100.3.0")
     compileOnly("org.geysermc.geyser:api:2.5.0-SNAPSHOT")
     compileOnly("org.geysermc.floodgate:api:2.2.3-SNAPSHOT")
@@ -62,7 +62,6 @@ tasks.shadowJar {
     archiveClassifier.set("")
     val shadeBase = "com.geowar.libs"
     relocate("com.zaxxer.hikari", "$shadeBase.hikari")
-    relocate("org.sqlite", "$shadeBase.sqlite")
 }
 
 tasks.build {

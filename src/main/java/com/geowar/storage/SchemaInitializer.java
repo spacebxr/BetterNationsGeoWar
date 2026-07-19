@@ -86,6 +86,10 @@ public final class SchemaInitializer {
                         "atk_econ REAL NOT NULL DEFAULT 0," +
                         "def_econ REAL NOT NULL DEFAULT 0)",
 
+                "CREATE TABLE IF NOT EXISTS geowar_wallets (" +
+                        "player_id " + key + " PRIMARY KEY," +
+                        "balance REAL NOT NULL DEFAULT 0)",
+
                 "CREATE INDEX IF NOT EXISTS idx_citizens_nation ON geowar_citizens (nation_id)",
                 "CREATE INDEX IF NOT EXISTS idx_towns_nation ON geowar_towns (nation_id)",
                 "CREATE INDEX IF NOT EXISTS idx_wars_attacker ON geowar_wars (attacker)",
