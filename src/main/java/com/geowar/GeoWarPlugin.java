@@ -17,6 +17,11 @@ import com.geowar.listeners.ChatInputListener;
 import com.geowar.listeners.GuiListener;
 import com.geowar.service.economy.EconomyProvider;
 import com.geowar.service.economy.InternalEconomyProvider;
+import com.geowar.service.NationManager;
+import com.geowar.service.TownManager;
+import com.geowar.storage.AsyncExecutor;
+import com.geowar.storage.repository.NationRepository;
+import com.geowar.storage.repository.TownRepository;
 import com.geowar.storage.Database;
 import com.geowar.storage.SchemaInitializer;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -27,6 +32,9 @@ import java.util.UUID;
 
 public final class GeoWarPlugin extends JavaPlugin {
     private Database database;
+    private AsyncExecutor asyncExecutor;
+    private NationManager nationManager;
+    private TownManager townManager;
     private CaptureZoneManager captureZoneManager;
     private CaptureZoneApi captureZoneApi;
     private WarManager warManager;
@@ -41,12 +49,17 @@ public final class GeoWarPlugin extends JavaPlugin {
     public void onEnable() {
         PluginConfig config = new PluginConfig(this);
         config.load();
-        database = new Database(config, getDataFolder());
-        database.connect();
         try {
+            database = new Database(config, getDataFolder());
+            database.connect();
             new SchemaInitializer(database).apply();
+            asyncExecutor = new AsyncExecutor(this);
+            nationManager = new NationManager(new NationRepository(database), asyncExecutor);
+            townManager = new TownManager(new TownRepository(database), asyncExecutor);
         } catch (Exception exception) {
             getLogger().severe("Failed to initialize database: " + exception.getMessage());
+            if (asyncExecutor != null) asyncExecutor.shutdown();
+            if (database != null) database.close();
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -55,10 +68,14 @@ public final class GeoWarPlugin extends JavaPlugin {
         treatyManager = new TreatyManager(this);
         meetingManager = new MeetingManager(this);
         militaryManager = new MilitaryManager(this);
-        economyService = new EconomyService();
+        economyService = new EconomyService(config.useVault());
         discordWebhookService = new DiscordWebhookService();
 
         EconomyProvider economy = new InternalEconomyProvider(database);
+        com.geowar.service.economy.EconomyService coreEconomy =
+                new com.geowar.service.economy.EconomyService(nationManager, townManager, economy, config);
+        getServer().getScheduler().runTaskTimer(this, coreEconomy::runCycle,
+                config.economyIntervalTicks(), config.economyIntervalTicks());
         TownyIntegration towny = new TownyIntegration();
         captureZoneManager = new CaptureZoneManager(this, economy, towny.townResolver());
         captureZoneApi = new CaptureZoneApi(captureZoneManager);
@@ -82,6 +99,7 @@ public final class GeoWarPlugin extends JavaPlugin {
         if (meetingManager != null) meetingManager.save();
         if (militaryManager != null) militaryManager.save();
         if (captureZoneManager != null) captureZoneManager.stop();
+        if (asyncExecutor != null) asyncExecutor.shutdown();
         if (database != null) database.close();
     }
 

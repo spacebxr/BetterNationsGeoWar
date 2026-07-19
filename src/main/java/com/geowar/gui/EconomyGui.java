@@ -15,7 +15,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.geysermc.cumulus.form.CustomForm;
 import org.geysermc.cumulus.form.SimpleForm;
-import org.geysermc.floodgate.api.FloodgateApi;
+import com.geowar.integration.FloodgateBridge;
 
 public class EconomyGui {
 
@@ -152,7 +152,7 @@ public class EconomyGui {
             }
         });
 
-        FloodgateApi.getInstance().sendForm(player.getUniqueId(), form.build());
+        FloodgateBridge.sendForm(player.getUniqueId(), form.build());
     }
 
     private static void openPayCitizenBedrock(Player player) {
@@ -167,7 +167,7 @@ public class EconomyGui {
             payCitizen(player, targetName, amountStr);
         });
 
-        FloodgateApi.getInstance().sendForm(player.getUniqueId(), form.build());
+        FloodgateBridge.sendForm(player.getUniqueId(), form.build());
     }
 
     private static void openDepositBedrock(Player player, String target) {
@@ -176,7 +176,7 @@ public class EconomyGui {
             .input("Amount", "Enter amount to deposit");
 
         form.validResultHandler((r) -> depositToBank(player, r.asInput(0), target));
-        FloodgateApi.getInstance().sendForm(player.getUniqueId(), form.build());
+        FloodgateBridge.sendForm(player.getUniqueId(), form.build());
     }
 
     private static void openSetTaxBedrock(Player player, String type) {
@@ -196,7 +196,7 @@ public class EconomyGui {
             }
         });
 
-        FloodgateApi.getInstance().sendForm(player.getUniqueId(), form.build());
+        FloodgateBridge.sendForm(player.getUniqueId(), form.build());
     }
 
     public static void handleClick(InventoryClickEvent event) {

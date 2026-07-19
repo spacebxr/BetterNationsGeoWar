@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.geysermc.cumulus.form.SimpleForm;
-import org.geysermc.floodgate.api.FloodgateApi;
+import com.geowar.integration.FloodgateBridge;
 
 import java.util.List;
 
@@ -115,7 +115,7 @@ public class MilitaryGui {
             }
         });
 
-        FloodgateApi.getInstance().sendForm(player.getUniqueId(), form.build());
+        FloodgateBridge.sendForm(player.getUniqueId(), form.build());
     }
 
     private static void showRosterBedrock(Player player, String nationName) {
@@ -137,7 +137,7 @@ public class MilitaryGui {
             .button("Back");
 
         form.validResultHandler((r) -> openBedrockGui(player));
-        FloodgateApi.getInstance().sendForm(player.getUniqueId(), form.build());
+        FloodgateBridge.sendForm(player.getUniqueId(), form.build());
     }
 
     public static void handleClick(InventoryClickEvent event) {
