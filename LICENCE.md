@@ -1,6 +1,7 @@
 # Copyright License Agreement
 
-**Copyright (c) 2026 spacebxr**  
+**Copyright (c) 2026 spacebxr**
+
 _All rights reserved._
 
 ---

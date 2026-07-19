@@ -18,7 +18,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.geysermc.cumulus.form.SimpleForm;
-import org.geysermc.floodgate.api.FloodgateApi;
+import com.geowar.integration.FloodgateBridge;
 
 public class NationGuiCommand implements CommandExecutor {
 
@@ -41,7 +41,7 @@ public class NationGuiCommand implements CommandExecutor {
         }
 
         boolean isBedrock = Bukkit.getPluginManager().getPlugin("floodgate") != null
-            && FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId());
+            && FloodgateBridge.isFloodgatePlayer(player.getUniqueId());
 
         if (isBedrock) {
             openBedrockMain(player, resident);
@@ -120,7 +120,7 @@ public class NationGuiCommand implements CommandExecutor {
             else if (id == 2) DiplomacyGui.openBedrockGui(player);
         });
 
-        FloodgateApi.getInstance().sendForm(player.getUniqueId(), form.build());
+        FloodgateBridge.sendForm(player.getUniqueId(), form.build());
     }
 
     private String getRankLine(Resident resident) {

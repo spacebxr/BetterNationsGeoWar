@@ -14,7 +14,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.geysermc.cumulus.form.CustomForm;
 import org.geysermc.cumulus.form.SimpleForm;
-import org.geysermc.floodgate.api.FloodgateApi;
+import com.geowar.integration.FloodgateBridge;
 
 import java.util.Collection;
 import java.util.List;
@@ -141,7 +141,7 @@ public class DiplomacyGui {
             }
         });
 
-        FloodgateApi.getInstance().sendForm(player.getUniqueId(), form.build());
+        FloodgateBridge.sendForm(player.getUniqueId(), form.build());
     }
 
     private static void openDeclareWarBedrockStep1(Player player, Nation nation) {
@@ -165,7 +165,7 @@ public class DiplomacyGui {
             openDeclareWarBedrockStep2(player, nation, target);
         });
 
-        FloodgateApi.getInstance().sendForm(player.getUniqueId(), form.build());
+        FloodgateBridge.sendForm(player.getUniqueId(), form.build());
     }
 
     private static void openDeclareWarBedrockStep2(Player player, Nation attacker, Nation defender) {
@@ -188,7 +188,7 @@ public class DiplomacyGui {
             broadcastWar(attacker.getName(), defender.getName(), reason, demands, player.getName());
         });
 
-        FloodgateApi.getInstance().sendForm(player.getUniqueId(), form.build());
+        FloodgateBridge.sendForm(player.getUniqueId(), form.build());
     }
 
     private static void openPeaceBedrock(Player player, Nation nation) {
@@ -217,7 +217,7 @@ public class DiplomacyGui {
             GeoWarPlugin.getInstance().getDiscord().sendPeaceAgreement(nation.getName(), opponent, player.getName());
         });
 
-        FloodgateApi.getInstance().sendForm(player.getUniqueId(), form.build());
+        FloodgateBridge.sendForm(player.getUniqueId(), form.build());
     }
 
     private static void openLogTreatyBedrock(Player player, Nation nation) {
@@ -249,10 +249,10 @@ public class DiplomacyGui {
                 GeoWarPlugin.getInstance().getDiscord().sendTreatyLogged(nation.getName(), partner.getName(), type, terms, player.getName());
             });
 
-            FloodgateApi.getInstance().sendForm(player.getUniqueId(), form.build());
+            FloodgateBridge.sendForm(player.getUniqueId(), form.build());
         });
 
-        FloodgateApi.getInstance().sendForm(player.getUniqueId(), nationPicker.build());
+        FloodgateBridge.sendForm(player.getUniqueId(), nationPicker.build());
     }
 
     private static void showTreatiesBedrock(Player player, Nation nation) {
@@ -268,7 +268,7 @@ public class DiplomacyGui {
         }
         SimpleForm.Builder form = SimpleForm.builder().title("Treaties").content(sb.toString()).button("Back");
         form.validResultHandler(r -> openBedrockGui(player));
-        FloodgateApi.getInstance().sendForm(player.getUniqueId(), form.build());
+        FloodgateBridge.sendForm(player.getUniqueId(), form.build());
     }
 
     private static void openRevokeTreatyBedrock(Player player, Nation nation) {
@@ -291,7 +291,7 @@ public class DiplomacyGui {
             Bukkit.broadcastMessage(ChatColor.RED + "[GeoWar] " + nation.getName() + " has revoked their treaty with " + partner + ".");
             GeoWarPlugin.getInstance().getDiscord().sendTreatyRevoked(nation.getName(), partner, player.getName());
         });
-        FloodgateApi.getInstance().sendForm(player.getUniqueId(), form.build());
+        FloodgateBridge.sendForm(player.getUniqueId(), form.build());
     }
 
     private static void openRequestMeetingBedrock(Player player, Nation nation) {
@@ -320,10 +320,10 @@ public class DiplomacyGui {
                 player.sendMessage(ChatColor.GREEN + "Meeting request sent to " + target.getName() + ".");
             });
 
-            FloodgateApi.getInstance().sendForm(player.getUniqueId(), form.build());
+            FloodgateBridge.sendForm(player.getUniqueId(), form.build());
         });
 
-        FloodgateApi.getInstance().sendForm(player.getUniqueId(), picker.build());
+        FloodgateBridge.sendForm(player.getUniqueId(), picker.build());
     }
 
     private static void showMeetingsBedrock(Player player, Nation nation) {
@@ -340,7 +340,7 @@ public class DiplomacyGui {
 
         SimpleForm.Builder form = SimpleForm.builder().title("Meetings").content(sb.toString()).button("Back");
         form.validResultHandler(r -> openBedrockGui(player));
-        FloodgateApi.getInstance().sendForm(player.getUniqueId(), form.build());
+        FloodgateBridge.sendForm(player.getUniqueId(), form.build());
     }
 
     private static void showWarsBedrock(Player player, Nation nation) {
@@ -351,7 +351,7 @@ public class DiplomacyGui {
 
         SimpleForm.Builder form = SimpleForm.builder().title("Active Wars").content(sb.toString()).button("Back");
         form.validResultHandler(r -> openBedrockGui(player));
-        FloodgateApi.getInstance().sendForm(player.getUniqueId(), form.build());
+        FloodgateBridge.sendForm(player.getUniqueId(), form.build());
     }
 
     public static void handleClick(InventoryClickEvent event) {

@@ -105,7 +105,7 @@ public class ChatInputListener implements Listener {
                                 com.palmergames.bukkit.towny.object.Resident resident = com.palmergames.bukkit.towny.TownyAPI.getInstance().getResident(player);
                                 if (resident == null || resident.getNationOrNull() == null) return;
                                 String myNation = resident.getNationOrNull().getName();
-                                
+
                                 GeoWarPlugin.getInstance().getWarManager().declareWar(myNation, targetNation, reason, input);
                                 com.geowar.gui.DiplomacyGui.broadcastWar(myNation, targetNation, reason, input, player.getName());
                                 player.sendMessage(ChatColor.GREEN + "War declared successfully. Use /ngui and Diplomacy to view it.");

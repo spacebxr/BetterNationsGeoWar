@@ -2,9 +2,26 @@ name: GeoWarPlugin
 version: '${version}'
 main: com.geowar.GeoWarPlugin
 api-version: '1.21'
+author: GeoWar Development Team
 depend: [Towny]
-softdepend: [Geyser-Spigot, floodgate, Vault]
+softdepend: [Geyser-Spigot, floodgate, Vault, PlaceholderAPI, dynmap, BlueMap]
 commands:
   nationgui:
     description: Opens the Nation GUI
     aliases: [ngui]
+  capturezone:
+    description: Manage capture zones
+    permission: geowar.capturezone.admin
+  oilrig:
+    description: Manage oil rigs
+    permission: geowar.capturezone.admin
+  koth:
+    description: Manage KOTH objectives
+    permission: geowar.capturezone.admin
+permissions:
+  geowar.capturezone.admin:
+    description: Manage capture objectives
+    default: op
+  geowar.capturezone.capture:
+    description: Capture objectives
+    default: true
