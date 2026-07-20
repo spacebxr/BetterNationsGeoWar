@@ -109,9 +109,17 @@ public class MilitaryGui {
             } else if (id == 1) {
                 showRosterBedrock(player, nation.getName());
             } else if (id == 2) {
-                player.sendMessage(ChatColor.YELLOW + "Soldier promotion requires Java client for input. Use /ngui.");
+                if (!resident.isKing() && !resident.isMayor()) {
+                    player.sendMessage(ChatColor.RED + "Only Kings and Mayors can promote soldiers.");
+                    return;
+                }
+                openPromoteBedrock(player, nation);
             } else if (id == 3) {
-                player.sendMessage(ChatColor.YELLOW + "Soldier dismissal requires Java client for input. Use /ngui.");
+                if (!resident.isKing() && !resident.isMayor()) {
+                    player.sendMessage(ChatColor.RED + "Only Kings and Mayors can dismiss soldiers.");
+                    return;
+                }
+                openDismissBedrock(player, nation);
             }
         });
 
@@ -138,6 +146,72 @@ public class MilitaryGui {
 
         form.validResultHandler((r) -> openBedrockGui(player));
         FloodgateBridge.sendForm(player.getUniqueId(), form.build());
+    }
+
+    private static void openPromoteBedrock(Player player, Nation nation) {
+        MilitaryManager mm = GeoWarPlugin.getInstance().getMilitaryManager();
+        List<Resident> residents = new java.util.ArrayList<>(nation.getResidents());
+
+        SimpleForm.Builder form = SimpleForm.builder()
+            .title("Promote Soldier")
+            .content("Select a resident to promote (cycles rank):");
+
+        for (Resident r : residents) {
+            String rank = mm.getMilitaryRank(r.getUUID());
+            form.button(r.getName() + "\n" + rank);
+        }
+
+        form.validResultHandler((r) -> {
+            Resident target = residents.get(r.clickedButtonId());
+            String currentRank = mm.getMilitaryRank(target.getUUID());
+            String newRank = cycleRank(currentRank);
+            mm.setMilitaryRank(target.getUUID(), newRank);
+            player.sendMessage(ChatColor.GREEN + target.getName() + " has been set to rank: " + newRank);
+            openBedrockGui(player);
+        });
+
+        FloodgateBridge.sendForm(player.getUniqueId(), form.build());
+    }
+
+    private static void openDismissBedrock(Player player, Nation nation) {
+        MilitaryManager mm = GeoWarPlugin.getInstance().getMilitaryManager();
+        List<MilitaryManager.MilitaryMember> roster = mm.getMembersOf(nation.getName());
+
+        if (roster.isEmpty()) {
+            player.sendMessage(ChatColor.RED + "There are no soldiers to dismiss.");
+            return;
+        }
+
+        SimpleForm.Builder form = SimpleForm.builder()
+            .title("Dismiss Soldier")
+            .content("Select a soldier to dismiss from the military:");
+
+        for (MilitaryManager.MilitaryMember member : roster) {
+            form.button(member.name + "\n" + member.rank);
+        }
+
+        form.validResultHandler((r) -> {
+            MilitaryManager.MilitaryMember target = roster.get(r.clickedButtonId());
+            Resident targetResident = TownyAPI.getInstance().getResident(target.name);
+            if (targetResident != null) {
+                mm.removeMilitaryRank(targetResident.getUUID());
+                player.sendMessage(ChatColor.RED + target.name + " has been dismissed from the military.");
+            }
+            openBedrockGui(player);
+        });
+
+        FloodgateBridge.sendForm(player.getUniqueId(), form.build());
+    }
+
+    private static String cycleRank(String currentRank) {
+        switch (currentRank) {
+            case "Civilian": return "Soldier";
+            case "Soldier": return "Sergeant";
+            case "Sergeant": return "Captain";
+            case "Captain": return "General";
+            case "General": return "Civilian";
+            default: return "Soldier";
+        }
     }
 
     public static void handleClick(InventoryClickEvent event) {
