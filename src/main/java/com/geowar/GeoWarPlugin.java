@@ -8,6 +8,7 @@ import com.geowar.commands.NationGuiCommand;
 import com.geowar.config.PluginConfig;
 import com.geowar.data.MeetingManager;
 import com.geowar.data.MilitaryManager;
+import com.geowar.data.NationAccessManager;
 import com.geowar.data.TreatyManager;
 import com.geowar.data.WarManager;
 import com.geowar.discord.DiscordWebhookService;
@@ -43,6 +44,8 @@ public final class GeoWarPlugin extends JavaPlugin {
     private MilitaryManager militaryManager;
     private EconomyService economyService;
     private DiscordWebhookService discordWebhookService;
+    private NationAccessManager accessManager;
+
     private final Map<UUID, String> pendingActions = new HashMap<>();
 
     @Override
@@ -68,6 +71,7 @@ public final class GeoWarPlugin extends JavaPlugin {
         treatyManager = new TreatyManager(this);
         meetingManager = new MeetingManager(this);
         militaryManager = new MilitaryManager(this);
+        accessManager = new NationAccessManager(this);
         economyService = new EconomyService(config.useVault());
         discordWebhookService = new DiscordWebhookService();
 
@@ -111,5 +115,6 @@ public final class GeoWarPlugin extends JavaPlugin {
     public MilitaryManager getMilitaryManager() { return militaryManager; }
     public EconomyService getEconomy() { return economyService; }
     public DiscordWebhookService getDiscord() { return discordWebhookService; }
+    public NationAccessManager getAccessManager() { return accessManager; }
     public Map<UUID, String> getPendingActions() { return pendingActions; }
 }

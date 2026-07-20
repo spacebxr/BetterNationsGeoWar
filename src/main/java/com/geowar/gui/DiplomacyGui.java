@@ -130,11 +130,19 @@ public class DiplomacyGui {
         form.validResultHandler((response) -> {
             int id = response.clickedButtonId();
             switch (id) {
-                case 0: openDeclareWarBedrockStep1(player, nation); break;
-                case 1: openPeaceBedrock(player, nation); break;
-                case 2: openLogTreatyBedrock(player, nation); break;
+                case 0:
+                    if (!resident.isKing()) { player.sendMessage(ChatColor.RED + "Only the King can declare war."); return; }
+                    openDeclareWarBedrockStep1(player, nation); break;
+                case 1:
+                    if (!resident.isKing()) { player.sendMessage(ChatColor.RED + "Only the King can propose peace."); return; }
+                    openPeaceBedrock(player, nation); break;
+                case 2:
+                    if (!resident.isKing()) { player.sendMessage(ChatColor.RED + "Only the King can sign treaties."); return; }
+                    openLogTreatyBedrock(player, nation); break;
                 case 3: showTreatiesBedrock(player, nation); break;
-                case 4: openRevokeTreatyBedrock(player, nation); break;
+                case 4:
+                    if (!resident.isKing()) { player.sendMessage(ChatColor.RED + "Only the King can revoke treaties."); return; }
+                    openRevokeTreatyBedrock(player, nation); break;
                 case 5: openRequestMeetingBedrock(player, nation); break;
                 case 6: showMeetingsBedrock(player, nation); break;
                 case 7: showWarsBedrock(player, nation); break;
@@ -365,14 +373,17 @@ public class DiplomacyGui {
 
         switch (itemName) {
             case "Declare War":
+                if (!resident.isKing()) { player.sendMessage(ChatColor.RED + "Only the King can declare war."); return; }
                 player.closeInventory();
                 openNationPickerJava(player, nation, "declare_war");
                 break;
             case "Propose Peace":
+                if (!resident.isKing()) { player.sendMessage(ChatColor.RED + "Only the King can propose peace."); return; }
                 player.closeInventory();
                 openPeacePickerJava(player, nation);
                 break;
             case "Log Treaty":
+                if (!resident.isKing()) { player.sendMessage(ChatColor.RED + "Only the King can sign treaties."); return; }
                 player.closeInventory();
                 openNationPickerJava(player, nation, "log_treaty");
                 break;
@@ -381,6 +392,7 @@ public class DiplomacyGui {
                 openTreatiesJava(player, nation);
                 break;
             case "Revoke Treaty":
+                if (!resident.isKing()) { player.sendMessage(ChatColor.RED + "Only the King can revoke treaties."); return; }
                 player.closeInventory();
                 openRevokeTreatyJava(player, nation);
                 break;

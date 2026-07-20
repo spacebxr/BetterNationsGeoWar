@@ -1,0 +1,69 @@
+# GeoWarPlugin configuration.
+# All optional integrations are auto-detected; the toggles below only let you
+# force-disable one even when the plugin is installed.
+
+storage:
+  # SQLITE (file, zero-setup) or MYSQL (shared, multi-server).
+  type: SQLITE
+  mysql:
+    host: localhost
+    port: 3306
+    database: geowar
+    user: root
+    password: ""
+
+economy:
+  # How often taxes are collected and salaries paid, in server ticks (20 = 1s).
+  interval-ticks: 12000
+  # Upper bound a treasurer can set the tax rate to (0.0 - 1.0).
+  max-tax-rate: 0.5
+  # Baseline income a town contributes before building and population modifiers.
+  base-town-income: 250.0
+
+military:
+  # Per-troop upkeep charged to the treasury each economy cycle.
+  troop-upkeep: 5.0
+
+war:
+  # Cadence of the war progression tick.
+  tick-interval-ticks: 1200
+  # Mobilisation window before a declared war becomes active.
+  preparation-seconds: 300
+  # Relative weight of each dimension in the war score.
+  score-weights:
+    territory: 12.0
+    battles: 6.0
+    casualties: 0.08
+    economic: 0.002
+
+integrations:
+  vault: true
+  towny: true
+  placeholderapi: true
+  discordsrv: true
+
+discord:
+  webhook-url: "YOUR_WEBHOOK_URL_HERE"
+  server-name: "Minecraft Server"
+
+capture:
+  update-interval-ticks: 20
+  default-capture-seconds: 600
+  contest-freeze: true
+  mob-spawn-blocking: true
+  ui:
+    bossbar: true
+    actionbar: true
+    titles: true
+    sounds: true
+    particles: true
+    announcements: true
+
+# Per-role permission overrides. Omit a role to use its built-in defaults.
+# Valid permissions are the names of com.geowar.model.role.NationPermission.
+roles:
+  citizen:
+    permissions:
+      - ECONOMY_VIEW
+      - MILITARY_VIEW
+      - DIPLOMACY_VIEW

@@ -40,6 +40,19 @@ public class NationGuiCommand implements CommandExecutor {
             return;
         }
 
+        Nation nation = resident.getNationOrNull();
+        if (nation == null) {
+            player.sendMessage(ChatColor.RED + "You are not part of a nation.");
+            return;
+        }
+
+        boolean isKing = resident.isKing();
+        boolean hasAccess = isKing || GeoWarPlugin.getInstance().getAccessManager().hasAccess(nation.getName(), player.getUniqueId());
+        if (!hasAccess) {
+            player.sendMessage(ChatColor.RED + "You do not have access to the Nation Management panel.");
+            return;
+        }
+
         boolean isBedrock = Bukkit.getPluginManager().getPlugin("floodgate") != null
             && FloodgateBridge.isFloodgatePlayer(player.getUniqueId());
 
@@ -92,6 +105,14 @@ public class NationGuiCommand implements CommandExecutor {
             ChatColor.DARK_GRAY + "Click to open"
         ));
 
+        if (resident.isKing()) {
+            gui.setItem(31, GuiUtil.createItem(Material.SHIELD,
+                ChatColor.LIGHT_PURPLE + "Manage Access",
+                ChatColor.GRAY + "Control who can open this panel",
+                ChatColor.DARK_GRAY + "Click to manage"
+            ));
+        }
+
         player.openInventory(gui);
     }
 
@@ -113,11 +134,69 @@ public class NationGuiCommand implements CommandExecutor {
             .button("Economy & Taxes")
             .button("Diplomacy");
 
+        if (resident.isKing()) {
+            form.button("Manage Access");
+        }
+
         form.validResultHandler((response) -> {
             int id = response.clickedButtonId();
             if (id == 0) MilitaryGui.openBedrockGui(player);
             else if (id == 1) EconomyGui.openBedrockGui(player);
             else if (id == 2) DiplomacyGui.openBedrockGui(player);
+            else if (id == 3 && resident.isKing()) openBedrockAccessManager(player, resident);
+        });
+
+        FloodgateBridge.sendForm(player.getUniqueId(), form.build());
+    }
+
+    private void openBedrockAccessManager(Player player, Resident resident) {
+        if (resident.getNationOrNull() == null) return;
+        com.geowar.data.NationAccessManager am = GeoWarPlugin.getInstance().getAccessManager();
+        java.util.List<com.geowar.data.NationAccessManager.AccessEntry> entries = am.getAccessList(resident.getNationOrNull().getName());
+
+        StringBuilder content = new StringBuilder("Players with access:\n");
+        if (entries.isEmpty()) content.append("None\n");
+        else for (com.geowar.data.NationAccessManager.AccessEntry e : entries) content.append(e.name).append("\n");
+        content.append("\nUse 'Add Player' to grant access.");
+
+        org.geysermc.cumulus.form.SimpleForm.Builder form = org.geysermc.cumulus.form.SimpleForm.builder()
+            .title("Manage Nation Access")
+            .content(content.toString())
+            .button("Add Player")
+            .button("Revoke Player");
+
+        form.validResultHandler((r) -> {
+            if (r.clickedButtonId() == 0) {
+                player.sendMessage(ChatColor.YELLOW + "Type the player name to grant access:");
+                GeoWarPlugin.getInstance().getPendingActions().put(player.getUniqueId(), "access_add:");
+            } else if (r.clickedButtonId() == 1) {
+                openBedrockAccessRevoke(player, resident);
+            }
+        });
+
+        FloodgateBridge.sendForm(player.getUniqueId(), form.build());
+    }
+
+    private void openBedrockAccessRevoke(Player player, Resident resident) {
+        if (resident.getNationOrNull() == null) return;
+        String nationName = resident.getNationOrNull().getName();
+        com.geowar.data.NationAccessManager am = GeoWarPlugin.getInstance().getAccessManager();
+        java.util.List<com.geowar.data.NationAccessManager.AccessEntry> entries = am.getAccessList(nationName);
+
+        if (entries.isEmpty()) {
+            player.sendMessage(ChatColor.RED + "No players to revoke.");
+            return;
+        }
+
+        org.geysermc.cumulus.form.SimpleForm.Builder form = org.geysermc.cumulus.form.SimpleForm.builder()
+            .title("Revoke Access")
+            .content("Select a player to remove:");
+        for (com.geowar.data.NationAccessManager.AccessEntry e : entries) form.button(e.name);
+
+        form.validResultHandler((r) -> {
+            com.geowar.data.NationAccessManager.AccessEntry target = entries.get(r.clickedButtonId());
+            am.revokeAccess(nationName, target.uuid);
+            player.sendMessage(ChatColor.GREEN + "Revoked access for " + target.name + ".");
         });
 
         FloodgateBridge.sendForm(player.getUniqueId(), form.build());

@@ -2,8 +2,10 @@ package com.geowar.listeners;
 
 import com.geowar.GeoWarPlugin;
 import com.geowar.data.MilitaryManager;
+import com.geowar.data.NationAccessManager;
 import com.geowar.data.TreatyManager;
 import com.geowar.data.WarManager;
+import com.geowar.gui.AccessGui;
 import com.geowar.gui.DiplomacyGui;
 import com.geowar.gui.EconomyGui;
 import com.geowar.gui.GuiUtil;
@@ -43,7 +45,15 @@ public class GuiListener implements Listener {
                 EconomyGui.openJavaGui(player);
             } else if (name.equals("Diplomacy")) {
                 DiplomacyGui.openJavaGui(player);
+            } else if (name.equals("Manage Access")) {
+                com.geowar.gui.AccessGui.openJavaGui(player);
             }
+            return;
+        }
+
+        if (title.equals("Manage Nation Access")) {
+            event.setCancelled(true);
+            handleAccessScreen(event, player);
             return;
         }
 
@@ -161,6 +171,10 @@ public class GuiListener implements Listener {
             player.closeInventory();
 
             if (action.equals("declare_war")) {
+                if (!myNation.getKing().getUUID().equals(player.getUniqueId())) {
+                    player.sendMessage(ChatColor.RED + "Only the King can declare war.");
+                    return;
+                }
                 WarManager wm = GeoWarPlugin.getInstance().getWarManager();
                 if (wm.isAtWar(myNation.getName(), targetNationName)) {
                     player.sendMessage(ChatColor.RED + "You are already at war with " + targetNationName + ".");
@@ -170,6 +184,10 @@ public class GuiListener implements Listener {
                 player.sendMessage(ChatColor.YELLOW + "Please type your reason for declaring war in chat:");
 
             } else if (action.equals("log_treaty")) {
+                if (!myNation.getKing().getUUID().equals(player.getUniqueId())) {
+                    player.sendMessage(ChatColor.RED + "Only the King can sign treaties.");
+                    return;
+                }
                 GeoWarPlugin.getInstance().getTreatyManager().logTreaty(myNation.getName(), targetNationName, "Alliance", "Mutual cooperation");
                 Bukkit.broadcastMessage(ChatColor.GOLD + "[GeoWar] " + myNation.getName() + " and " + targetNationName + " have formed an Alliance.");
                 GeoWarPlugin.getInstance().getDiscord().sendTreatyLogged(myNation.getName(), targetNationName, "Alliance", "Mutual cooperation", player.getName());
@@ -188,6 +206,11 @@ public class GuiListener implements Listener {
                 return;
             }
             if (itemName.startsWith("Peace with ")) {
+                if (!myNation.getKing().getUUID().equals(player.getUniqueId())) {
+                    player.sendMessage(ChatColor.RED + "Only the King can propose peace.");
+                    player.closeInventory();
+                    return;
+                }
                 String opponent = itemName.replace("Peace with ", "");
                 GeoWarPlugin.getInstance().getWarManager().endWar(myNation.getName(), opponent);
                 Bukkit.broadcastMessage(ChatColor.GREEN + "[GeoWar] " + myNation.getName() + " and " + opponent + " have ended their war.");
@@ -234,6 +257,46 @@ public class GuiListener implements Listener {
         }
 
         DiplomacyGui.handleClick(event);
+    }
+
+    private void handleAccessScreen(InventoryClickEvent event, Player player) {
+        if (event.getCurrentItem() == null || !event.getCurrentItem().hasItemMeta()) return;
+        String itemName = ChatColor.stripColor(event.getCurrentItem().getItemMeta().getDisplayName());
+
+        Resident resident = TownyAPI.getInstance().getResident(player);
+        if (resident == null || !resident.isKing() || resident.getNationOrNull() == null) {
+            player.sendMessage(ChatColor.RED + "Only the King can manage access.");
+            player.closeInventory();
+            return;
+        }
+        String nationName = resident.getNationOrNull().getName();
+        NationAccessManager am = GeoWarPlugin.getInstance().getAccessManager();
+
+        if (itemName.equals("Add Player")) {
+            player.closeInventory();
+            player.sendMessage(ChatColor.YELLOW + "Type the player name to grant access:");
+            GeoWarPlugin.getInstance().getPendingActions().put(player.getUniqueId(), "access_add:");
+            return;
+        }
+
+        if (itemName.equals("Back")) {
+            player.closeInventory();
+            Bukkit.getScheduler().runTaskLater(GeoWarPlugin.getInstance(),
+                () -> new com.geowar.commands.NationGuiCommand().openMainGui(player), 1L);
+            return;
+        }
+
+        List<NationAccessManager.AccessEntry> entries = am.getAccessList(nationName);
+        for (NationAccessManager.AccessEntry entry : entries) {
+            if (entry.name.equalsIgnoreCase(itemName)) {
+                am.revokeAccess(nationName, entry.uuid);
+                player.sendMessage(ChatColor.RED + "Revoked access for " + entry.name + ".");
+                player.closeInventory();
+                Bukkit.getScheduler().runTaskLater(GeoWarPlugin.getInstance(),
+                    () -> AccessGui.openJavaGui(player), 1L);
+                return;
+            }
+        }
     }
 
     private String cycleRank(String currentRank) {
